@@ -11,6 +11,11 @@ popularity and straggler estimation to decide what parity blocks should be
 cached.
 
 ## Build
+
+Environment:
+* Ubuntu 16.04
+* JDK1.8.0_151
+
 ### Install Prerequisite
 #### Maven
 ```
@@ -33,12 +38,6 @@ Add src/protoc into your path so that the building procedure can find it.
 
 ### Build and Install
 
-Environment:
-
-Ubuntu 16.04
-
-JDK1.8.0_151
-
 #### POCache - based on Hadoop 3.1.1
 ```
 $ mvn package -DskipTests -Dtar -Dmaven.javadoc.skip=true -Drequire.isal -Pdist,native -DskipShade -e
@@ -60,11 +59,12 @@ The documents of pocache-dfs-perf can be found under pocache-dfs-perf/docs
 3. Run Hadoop following the tutorial of the official document.
 4. Use pocache-dfs-perf to benchmark POCache following the tutorial in pocache-dfs-perf.
 
-Note: pocache-dfs-perf leverage **vmtouch** to disable page cache (by cleaning page cache before each read request) for a fair comparison environment.
+Note that pocache-dfs-perf leverage **vmtouch** to disable page cache (by cleaning page cache before each read request) for a fair comparison environment.
 
 ## Contact
 Please email to Mi Zhang (mzhang@cse.cuhk.edu.hk) if you have any questions.
 
 ## Publication
-Mi Zhang, Qiuping Wang, Zhirong Shen, and Patrick P. C. Lee (http://www.cse.cuhk.edu.hk/~pclee)
+Mi Zhang, Qiuping Wang, Zhirong Shen, and [Patrick P. C. Lee](http://www.cse.cuhk.edu.hk/~pclee).
+
 "Parity-Only Caching for Robust Straggler Tolerance", MSST 2019
