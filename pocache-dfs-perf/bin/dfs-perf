@@ -1,0 +1,44 @@
+#!/usr/bin/env bash
+function printUsage {
+  echo "Usage: dfs-perf <TestCase>" echo "now TestCase is one of:"
+  echo -e "  SimpleWrite SimpleRead SkipRead Metadata"
+  echo -e "  Iterate Massive"
+  echo "the detailed configurations are in conf/testsuite/"
+}
+
+# if less than 1 args specified, show usage
+if [ $# -le 0 ]; then
+  printUsage
+  exit 1
+fi
+
+bin=`cd "$( dirname "$0" )"; pwd`
+
+DEFAULT_PERF_LIBEXEC_DIR="$bin"/../libexec
+DFS_PERF_LIBEXEC_DIR=${DFS_PERF_LIBEXEC_DIR:-$DEFAULT_PERF_LIBEXEC_DIR}
+. $DFS_PERF_LIBEXEC_DIR/dfs-perf-config.sh
+
+NODELIST=$DFS_PERF_CONF_DIR/slaves
+
+taskid=0
+SLAVES=`sort "$NODELIST"|sed  "s/#.*$//;/^$/d"`
+UNIQ_SLAVES=`sort "$NODELIST" | uniq | sed  "s/#.*$//;/^$/d"`
+for slave in $UNIQ_SLAVES; do
+  echo -n "Copy configurations to $slave... "
+  scp $DFS_PERF_CONF_DIR/dfs-perf-env.sh $slave:$DFS_PERF_CONF_DIR/dfs-perf-env.sh
+  scp $DFS_PERF_CONF_DIR/testsuite/$1.xml $slave:$DFS_PERF_CONF_DIR/testsuite/$1.xml
+  sleep 0.02
+done
+wait
+
+for slave in $UNIQ_SLAVES; do
+  slavenum=`echo $SLAVES | grep -o "$slave" | wc -l`
+  lasttaskid=`expr $taskid + $slavenum - 1`
+  echo -n "Connect to $slave... "
+  ssh -o ConnectTimeout=5 -o StrictHostKeyChecking=no -t $slave $bin/dfs-perf-start.sh $slave $taskid $lasttaskid $1 2>&1
+  sleep 0.02
+  taskid=`expr $lasttaskid + 1`
+done
+wait
+
+$JAVA -cp $DFS_PERF_CONF_DIR/:$DFS_PERF_JAR -Dpasalab.dfs.perf.home=$DFS_PERF_HOME -Dpasalab.dfs.perf.logger.type="PERF_MASTER_LOGGER" -Dlog4j.configuration=file:$DFS_PERF_CONF_DIR/log4j.properties $DFS_PERF_JAVA_OPTS pasalab.dfs.perf.DfsPerfMaster $taskid $SLAVES $1

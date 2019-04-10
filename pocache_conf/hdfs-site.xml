@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+
+<configuration>
+
+  
+<property><name>dfs.namenode.secondary.http-address</name><value>127.0.0.1:50090</value></property>
+<property><name>dfs.namenode.secondary.https-address</name><value>127.0.0.1:50091</value></property>
+
+<!-- Specify the number of data block in one stripe -->
+<property><name>dfs.client.pcache.read.dat.num</name><value>5</value></property>
+
+<!-- Specify the size of each subblock in one block -->
+<property><name>dfs.client.pcache.read.subblk.size</name><value>1048576</value></property>
+
+<!--property><name>io.file.buffer.size</name><value>1048576</value></property-->
+<!-- Specify the read policy: 1. Reactive, 2. Proactive, 3. Selective Replication -->
+<property><name>dfs.client.pcache.read.policy</name><value>2</value></property>
+
+<!-- Specify the caching algorithm adopted when the memory is insufficient
+    1. LRU, 2. ARC, 3. LFU, 4. StragglerAwareLRU,
+    5. StragglerAwareCache, 20. LFUCache (for selective replication)
+-->
+<property><name>dfs.client.pcache.read.cache.alg</name><value>1</value></property>
+
+<!-- Specify the ip address of redis cluster
+     by default, three ports 7001, 7002, 7003 should be used when creating the cluster
+-->
+<property><name>dfs.client.pcache.redis.ip</name><value>127.0.0.1</value></property>
+
+<property><name>dfs.blocksize</name><value>67108864</value></property>
+<!-- The replication factor is always set to one because we adopt a EC-based policy -->
+<property><name>dfs.replication</name><value>1</value></property>
+
+<property><name>dfs.namenode.name.dir</name><value>file:///home/potato/hadoop/tmp/dfs/name</value></property>
+<property><name>dfs.datanode.data.dir</name><value>file:///home/potato/hadoop/tmp/dfs/data</value></property>
+
+<!-- POCache Read
+     Set to true when client needs to read data using PCache
+-->
+<property>
+<name>dfs.pcache.read.on</name>
+<value>true</value>
+<!--
+<value>false</value>
+<value>true</value>
+-->
+</property>
+
+<!-- Properties related to the parity management and read mechanism
+     1. cache.size (capacity) specifies the maximum files to cache
+     (Trigger caching algorithm when the number of files exceed the capacity)
+     2. threadpool.size specifies the number of threads to parallelly retrieve subblocks
+     when fetching data
+     3. num.threads.write.subblk specifies the number of threads to parallelly write
+     subblock when writing parities into the cache server.
+     (Note that the data in parity cache server is stored by clients rather than servers)
+     4. threshold.millis specifies the waiting time when reactive policy is adopted.
+     5. par.num is the number of parities of a stripe
+  -->
+<property><name>dfs.client.pcache.read.cache.size</name><value>100</value></property>
+<property><name>dfs.client.pcache.read.threadpool.size</name><value>20</value></property>
+<property><name>dfs.client.pcache.read.num.threads.write.subblk</name><value>20</value></property>
+<property><name>dfs.client.pcache.read.threshold.millis</name><value>20</value></property>
+<property><name>dfs.client.pcache.read.par.num</name><value>1</value></property>
+
+<!-- Hedged Read
+     Hadoop native mechanism to address the tail latency problem
+-->
+<property><name>dfs.hedged.read.on</name><value>false</value></property>
+<!--
+<value>false</value>
+<value>true</value>
+-->
+<property><name>dfs.client.hedged.read.threadpool.size</name><value>64</value></property>
+<property><name>dfs.client.hedged.read.threshold.millis</name><value>0</value></property>
+
+<property><name>dfs.namenode.handler.count</name><value>100</value></property>
+
+
+<!-- Hadoop 3.0 Erasure Coding Policy 
+     Enable hadoop native ec policy
+     Note: if hadoop ec policy is defined,
+     all the configurations above that are related to ec configurations are invalid.
+     The above configurations related to ec are meant to import Erasure Coding into
+     the contiguous layout rather than striped layout which is adopted here in hadoop
+     native Erasure Coding policy.
+     We only need to deal with the parity cache server issue in this mode.
+-->
+<!--<property>-->
+<!--<name>dfs.namenode.ec.system.default.policy</name>-->
+<!--<value>RS-4-1-1024k</value>-->
+<!--<value>XOR-4-1-1024k</value>-->
+<!--</property>-->
+
+
+</configuration>

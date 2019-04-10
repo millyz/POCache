@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Perf Report - DFS-Perf 0.1 Documentation</title>
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+
+    <link rel="stylesheet" href="css/pygments-default.css">
+
+</head>
+<body>
+<!--[if lt IE 7]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade
+    your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install
+    Google Chrome Frame</a> to better experience this site.</p>
+<![endif]-->
+
+<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+<div class="navbar navbar-fixed-top" id="topbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <div class="brand">
+                <div style="position:absolute;">
+                    <a href="index.html">
+                        <img src="img/logo.png" alt="DFS-Perf Logo" style="height:50px;"/>
+                    </a>
+                </div>
+				<div style="float:right;margin-top:30px;">
+					<span class="version">0.1</span>
+				</div>
+            </div>
+            <ul class="nav">
+                <li><a href="index.html">Overview</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usages<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Examples.html">Examples</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Deploying<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Pre-built-Ones.html">Pre-built Ones</a></li>
+						<li><a href="Running-DFS-Perf-Locally.html">Local Mode</a></li>
+						<li><a href="Running-DFS-Perf-on-a-Cluster.html">Cluster Mode</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Community<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="FAQ.html">FAQ</a></li>
+                        <li><a href="http://pasa-bigdata.nju.edu.cn:61111/jira/browse/DFSPERF/?selectedTab=com.atlassian.jira.jira-projects-plugin:summary-panel">JIRA</a></li>
+                        <li><a href="https://groups.google.com/forum/?fromgroups#!forum/dfs-perf-users">Mail List</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">More<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Workloads.html">Workloads</a></li>
+                        <li><a href="Configuration-Settings.html">Configuration Settings</a></li>
+                        <li><a href="Download.html">Download</a></li>
+                        <li><a href="Perf-Report.html">Perf Report</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="content">
+    <h1 class="title">Perf Report</h1>
+
+    <p>We have evaluated the performance of widely-used representative DFS under different workloads with DFS-Perf. Here is a short report.</p>
+
+<h1 id="experimental-setup">Experimental Setup</h1>
+
+<pre><code>One master node -- two Intel Xeon X5660 CPUs with 64GB memory
+16 slave nodes -- two Intel Xeon E5620 CPUs with 64GB memory
+1Gb/s Ethernet
+
+RHEL 6.0 with Linux 2.6.32, Ext3 file system and Java 1.6.0.
+GlusterFS-3.5.0
+HDFS-2.3.0
+Alluxio-1.0.0
+</code></pre>
+
+<h1 id="basic-performance">Basic Performance</h1>
+
+<p>Here we take three workloads as examples to show the performance of the single situation. For simplicity, in some figures the label <em>Alluxio(In-Memory)</em> denotes in-memory operations of Alluxio and <em>Alluxio(Through)</em> means that those operations are going through the underlying file system, i.e., HDFS in our environment, without any in-memory access.</p>
+
+<h2 id="metadata-workload"><em>Metadata</em> Workload</h2>
+
+<p><img src="./img/metadata.png" alt="Metadata" /></p>
+
+<p><strong>Figure 1: The metadata performance in (a) multi-thread, (b) multi-process. For LocalFS, the value is the performance of a single node and for DFS it is the performance of the whole cluster.</strong>
+<br /></p>
+
+<p>In the metadata workload, we keep requesting metadata operations on each file system and measure the performance as ops-per-sec. In Figure 1, we can see that LocalFS beats others although it is single node. This is because the metadata operations of LocalFS are in single-node memory without any network interaction. While the GlusterFS has the worst performance since it’s metadata is decentralized and the metadata information needs to be synchronized over the cluster. On contrast, HDFS and Alluxio are metadata-centralized DFS. They have the similar metadata management thus they gain the similar metadata performance. HDFS is little slower than Alluxio because it generates more journal and edit log data for metadata operations.</p>
+
+<p>Comparing the results of multi-thread and multi-process modes, we find that all the metadata performance increases in multi-process. For LocalFS it increases a lot due to the single-node operation, while for DFS, it only increases a little since the network and the metadata node become the bottleneck.</p>
+
+<h2 id="mixture-workload"><em>Mixture</em> Workload</h2>
+
+<p><img src="./img/mixture.png" alt="Mixture" /></p>
+
+<p><strong>Figure 2: Mixed Read/Write Throughput. Read Throughput in (a) multi-thread, (b) multi-process. Write Throughput in (c) multi-thread, (d) multi-process. This is the average throughput of each thread/process.</strong>
+<br /></p>
+
+<p>We run mix read/write workload in three kinds of ratios, 80% read - 20% write, 50% read - 50% write and 20% read - 80% write. According to the results in Figure 2, the read and write throughput decreases with the rise of the write ratio. This is reasonable since the DFS have a lower write throughput than the read throughput no matter the data is in the memory, on the disk, or across the network.</p>
+
+<p>The interesting part in this workload is that, both read and write throughput of all the DFS have higher performance in multi-process than multi-thread. This suggests that the application better uses multi-process for better parallelism in these scenarios.</p>
+
+<h2 id="iterate-workload"><em>Iterate</em> Workload</h2>
+
+<p><img src="./img/iterate.png" alt="Iterate" /></p>
+
+<p><strong>Figure 3: Iterative Throughput. Shuffle Mode in (a) multi-thread, (b) multi-process. Non-Shuffle Mode in (c) multi-thread, (d) multi-process. This is the average throughput of each thread/process.</strong>
+<br /></p>
+
+<p>The performance results of iterative workload are shown in Figure 3. In the <em>Shuffle</em> mode, the read operations may be remote, thus the read throughput is limited by the network. In the <em>Non-Shuffle</em> mode, the read throughput benefits from the data locality, especially for Alluxio (In-Memory). And on the other side, Alluxio (In-Memory) with the <em>Non-Shuffle</em> mode reads and writes both in local memory, thus the write throughput is high than the <em>Shuffle</em> mode.</p>
+
+<p>In this workload, GlusterFS’s read and Alluxio’s in-memory operations achieve better performance in multi-process than multi-thread.</p>
+
+<h1 id="scalability">Scalability</h1>
+
+<p>Here we evaluate the scalability of DFS-Perf. We take the throughput of HDFS and Alluxio (In-Memory) as the test examples. At first, the workloads are run from 1 to 32 processes/threads on the single node. Then, the same workloads are run from 1 to 16 nodes, both in 16 threads or 16 processes.</p>
+
+<p><img src="./img/scalability.png" alt="Scalability" /></p>
+
+<p><strong>Figure 4: Scalability of DFS-Perf. In single-node we take the value of 1 process x 1 thread as the baseline and in multi-node we take the value of one node as the baseline. (a) single-node multi-thread. (b) single-node multi-process. (c) multi-node, each node is in 16 threads. (d) multi-node, each node is in 16 processes.</strong>
+<br /></p>
+
+<p>The speedup results are shown in Figure 4. From the results we can clearly find the upper bound of the single node. Then, in multi-node mode, the throughput of HDFS is limited by the whole cluster’s network, but Alluxio (In-Memory) achieves a linear scalability because it accesses data only from local memory. All the experimental results show that DFS-Perf has excellent scalability. With the scalability experiments, we can perform stress test to find the threshold or bottleneck of DFS.</p>
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <!--<div class="hero-unit">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+            </div>-->
+
+    <!-- Example row of columns -->
+    <!--<div class="row">
+        <div class="span4">
+            <h2>Heading</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+               </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+            </div>
+
+            <hr>-->
+
+    <footer>
+        <hr>
+        <p style="text-align: center; veritcal-align: middle; color: #999;">
+            DFS-Perf is a project developed at the Nanjing University
+            <a href="http://pasa-bigdata.nju.edu.cn/">
+                PASALab.
+            </a> All Rights Reserved.
+        </p>
+    </footer>
+
+</div>
+<!-- /container -->
+
+<script src="js/vendor/jquery-1.8.0.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+<!-- A script to fix internal hash links because we have an overlapping top bar.
+     Based on https://github.com/twitter/bootstrap/issues/193#issuecomment-2281510 -->
+<script>
+    $(function () {
+        function maybeScrollToHash() {
+            if (window.location.hash && $(window.location.hash).length) {
+                var newTop = $(window.location.hash).offset().top - $('#topbar').height() - 5;
+                $(window).scrollTop(newTop);
+            }
+        }
+
+        $(window).bind('hashchange', function () {
+            maybeScrollToHash();
+        });
+        // Scroll now too in case we had opened the page on a hash, but wait 1 ms because some browsers
+        // will try to do *their* initial scroll after running the onReady handler.
+        setTimeout(function () {
+            maybeScrollToHash();
+        }, 1)
+    })
+</script>
+
+</body>
+</html>

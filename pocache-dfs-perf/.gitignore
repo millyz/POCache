@@ -1,0 +1,10 @@
+./potato-dfs-perf/tests.log*
+./potato-dfs-perf/.classpath
+./potato-dfs-perf/.project
+./potato-dfs-perf/*.iml
+./potato-dfs-perf/.idea/
+./potato-dfs-perf/.metadata/
+./potato-dfs-perf/.settings/
+./potato-dfs-perf/conf/slaves
+./potato-dfs-perf/logs/
+./potato-dfs-perf/target/

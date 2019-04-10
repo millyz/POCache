@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Running DFS-Perf on a Cluster - DFS-Perf 0.1 Documentation</title>
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+
+    <link rel="stylesheet" href="css/pygments-default.css">
+
+</head>
+<body>
+<!--[if lt IE 7]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade
+    your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install
+    Google Chrome Frame</a> to better experience this site.</p>
+<![endif]-->
+
+<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+<div class="navbar navbar-fixed-top" id="topbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <div class="brand">
+                <div style="position:absolute;">
+                    <a href="index.html">
+                        <img src="img/logo.png" alt="DFS-Perf Logo" style="height:50px;"/>
+                    </a>
+                </div>
+				<div style="float:right;margin-top:30px;">
+					<span class="version">0.1</span>
+				</div>
+            </div>
+            <ul class="nav">
+                <li><a href="index.html">Overview</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usages<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Examples.html">Examples</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Deploying<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Pre-built-Ones.html">Pre-built Ones</a></li>
+						<li><a href="Running-DFS-Perf-Locally.html">Local Mode</a></li>
+						<li><a href="Running-DFS-Perf-on-a-Cluster.html">Cluster Mode</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Community<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="FAQ.html">FAQ</a></li>
+                        <li><a href="http://pasa-bigdata.nju.edu.cn:61111/jira/browse/DFSPERF/?selectedTab=com.atlassian.jira.jira-projects-plugin:summary-panel">JIRA</a></li>
+                        <li><a href="https://groups.google.com/forum/?fromgroups#!forum/dfs-perf-users">Mail List</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">More<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Workloads.html">Workloads</a></li>
+                        <li><a href="Configuration-Settings.html">Configuration Settings</a></li>
+                        <li><a href="Download.html">Download</a></li>
+                        <li><a href="Perf-Report.html">Perf Report</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="content">
+    <h1 class="title">Running DFS-Perf on a Cluster</h1>
+
+    <p>This guide describes how to get DFS-Perf running on a cluster.</p>
+
+<h1 id="prerequisites">Prerequisites</h1>
+<p>The prerequisites for this part contains all the prerequisites of <a href="Running-DFS-Perf-Locally.html">Running DFS-Perf Locally</a>. In addition, to run on a cluster, you need a Distributed File System from GlusterFS, GPFS, HDFS and Alluxio. </p>
+
+<h1 id="configurations">Configurations</h1>
+<p>Prepare the binary distribution of DFS-Perf:</p>
+
+<pre><code>$ tar xvfz dfs-perf-0.1-bin.tar.gz
+$ cd dfs-perf-0.1
+</code></pre>
+
+<p>Before running DFS-Perf, requisite environment variables must be specified in <code>conf/dfs-perf-env.sh</code></p>
+
+<pre><code>$ cp conf/dfs-perf-env.sh.template conf/dfs-perf-env.sh
+</code></pre>
+
+<p>To run on a cluster, these variables in <code>conf/dfs-perf-env.sh</code> should be set as follows:</p>
+
+<pre><code>export JAVA={where.your.java}
+ 
+# Set to the distributed file system, here take hdfs as example
+export DFS_PERF_DFS_ADRESS="hdfs://master:9000"
+ 
+# Set master address
+DFS_PERF_MASTER_HOSTNAME="master"
+</code></pre>
+
+<p>For different DFS, some specific variables need to be set. You can see the details in <a href="Running-DFS-Perf-on-GlusterFS.html">Running DFS-Perf on GlusterFS</a>, <a href="Running-DFS-Perf-on-GPFS.html">Running DFS-Perf on GPFS</a>, <a href="Running-DFS-Perf-on-HDFS.html">Running DFS-Perf on HDFS</a> and <a href="Running-DFS-Perf-on-Alluxio.html">Running DFS-Perf on Alluxio</a>.</p>
+
+<p>Then, set the slaves in <code>conf/slaves</code>. Each line represents a slave (actually a process).</p>
+
+<h1 id="example">Example</h1>
+<p>Now you can run DFS-Perf on DFS. For example, run the metadata workload.</p>
+
+<pre><code>$ bin/dfs-perf-clean
+$ bin/dfs-perf Metadata
+$ bin/dfs-perf-collect Metadata
+</code></pre>
+
+<p>See more examples on <a href="Examples.html">Examples</a>.</p>
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <!--<div class="hero-unit">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+            </div>-->
+
+    <!-- Example row of columns -->
+    <!--<div class="row">
+        <div class="span4">
+            <h2>Heading</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+               </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+            </div>
+
+            <hr>-->
+
+    <footer>
+        <hr>
+        <p style="text-align: center; veritcal-align: middle; color: #999;">
+            DFS-Perf is a project developed at the Nanjing University
+            <a href="http://pasa-bigdata.nju.edu.cn/">
+                PASALab.
+            </a> All Rights Reserved.
+        </p>
+    </footer>
+
+</div>
+<!-- /container -->
+
+<script src="js/vendor/jquery-1.8.0.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+<!-- A script to fix internal hash links because we have an overlapping top bar.
+     Based on https://github.com/twitter/bootstrap/issues/193#issuecomment-2281510 -->
+<script>
+    $(function () {
+        function maybeScrollToHash() {
+            if (window.location.hash && $(window.location.hash).length) {
+                var newTop = $(window.location.hash).offset().top - $('#topbar').height() - 5;
+                $(window).scrollTop(newTop);
+            }
+        }
+
+        $(window).bind('hashchange', function () {
+            maybeScrollToHash();
+        });
+        // Scroll now too in case we had opened the page on a hash, but wait 1 ms because some browsers
+        // will try to do *their* initial scroll after running the onReady handler.
+        setTimeout(function () {
+            maybeScrollToHash();
+        }, 1)
+    })
+</script>
+
+</body>
+</html>

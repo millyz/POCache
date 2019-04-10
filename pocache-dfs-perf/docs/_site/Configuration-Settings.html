@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>
+<html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>
+<html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>
+<html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Configuration Settings - DFS-Perf 0.1 Documentation</title>
+    <meta name="description" content="">
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="css/bootstrap-responsive.min.css">
+    <link rel="stylesheet" href="css/main.css">
+
+    <script src="js/vendor/modernizr-2.6.1-respond-1.1.0.min.js"></script>
+
+    <link rel="stylesheet" href="css/pygments-default.css">
+
+</head>
+<body>
+<!--[if lt IE 7]>
+<p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade
+    your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install
+    Google Chrome Frame</a> to better experience this site.</p>
+<![endif]-->
+
+<!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
+
+<div class="navbar navbar-fixed-top" id="topbar">
+    <div class="navbar-inner">
+        <div class="container">
+            <div class="brand">
+                <div style="position:absolute;">
+                    <a href="index.html">
+                        <img src="img/logo.png" alt="DFS-Perf Logo" style="height:50px;"/>
+                    </a>
+                </div>
+				<div style="float:right;margin-top:30px;">
+					<span class="version">0.1</span>
+				</div>
+            </div>
+            <ul class="nav">
+                <li><a href="index.html">Overview</a></li>
+
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Usages<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Examples.html">Examples</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Deploying<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Pre-built-Ones.html">Pre-built Ones</a></li>
+						<li><a href="Running-DFS-Perf-Locally.html">Local Mode</a></li>
+						<li><a href="Running-DFS-Perf-on-a-Cluster.html">Cluster Mode</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Community<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="FAQ.html">FAQ</a></li>
+                        <li><a href="http://pasa-bigdata.nju.edu.cn:61111/jira/browse/DFSPERF/?selectedTab=com.atlassian.jira.jira-projects-plugin:summary-panel">JIRA</a></li>
+                        <li><a href="https://groups.google.com/forum/?fromgroups#!forum/dfs-perf-users">Mail List</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">More<b
+                            class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="Workloads.html">Workloads</a></li>
+                        <li><a href="Configuration-Settings.html">Configuration Settings</a></li>
+                        <li><a href="Download.html">Download</a></li>
+                        <li><a href="Perf-Report.html">Perf Report</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container" id="content">
+    <h1 class="title">Configuration Settings</h1>
+
+    <p>DFS-Perf has two categories of configuration parameters. One is the <em>Environment Configurations</em> which is for the DFS-Perf framework. Another is the <em>Workloads Configurations</em> which is used to custom the workloads.</p>
+
+<h1 id="environment-configurations">Environment Configurations</h1>
+
+<p>These configuration contains the environment settings to run DFS-Perf. First, in <code>conf/slaves</code>, you can configure the nodes to launch DFS-Perf process, and you can repeat the node name to launch multi-process, e.g.</p>
+
+<pre><code>slaveA
+slaveA
+slaveB
+slaveB
+</code></pre>
+
+<p>means to launch two DFS-Perf processes on <code>slaveA</code> and <code>slaveB</code>.</p>
+
+<p>Then, the environment configurations are set in <code>conf/dfs-perf-env.sh</code></p>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>JAVA</td>
+  <td>/usr/lib/jvm/bin/java</td>
+  <td>Java installation path.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_DFS_ADRESS</td>
+  <td>alluxio://master:19998</td>
+  <td>The URI address of the targeted DFS.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_WORKSPACE</td>
+  <td>/tmp/dfs-perf-workspace</td>
+  <td>The workspace folder's path of DFS-Perf in targeted DFS.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_OUT_DIR</td>
+  <td>$DFS_PERF_HOME/result</td>
+  <td>The performance result output dir.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_MASTER_HOSTNAME</td>
+  <td>master</td>
+  <td>The DFS-Perf master service address.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_MASTER_PORT</td>
+  <td>23333</td>
+  <td>The DFS-Perf master service port.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_THREADS_NUM</td>
+  <td>4</td>
+  <td>The thread num of each DFS-Perf process.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_UNREGISTER_TIMEOUT_MS</td>
+  <td>10000</td>
+  <td>The slave is considered to be failed if not register in this time.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_STATUS_DEBUG</td>
+  <td>false</td>
+  <td>If true, it will print the names of those running and remaining nodes.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_FAILED_ABORT</td>
+  <td>true</td>
+  <td>If true, the test will abort when the number of failed nodes more than the threshold.</td>
+</tr>
+<tr>
+  <td>DFS_PERF_FAILED_PERCENTAGE</td>
+  <td>1</td>
+  <td>The threshold percentage for failure abort.</td>
+</tr>
+</table>
+
+<h1 id="workloads-configurations">Workloads Configurations</h1>
+
+<p>Each workload has its own configurations and can be modified in <code>conf/testsuite/{workload.name}</code></p>
+
+<h2 id="metadata">Metadata</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>clients.per.thread</td>
+  <td>20</td>
+  <td>the number of clients to connect to the file system for each thread</td>
+</tr>
+<tr>
+  <td>op.second.per.thread</td>
+  <td>5</td>
+  <td>the metadata operations time for each thread, in seconds</td>
+</tr>
+</table>
+
+<h2 id="simplewrite">SimpleWrite</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>files.per.thread</td>
+  <td>2</td>
+  <td>the number of files to write for each write thread</td>
+</tr>
+<tr>
+  <td>block.size.bytes</td>
+  <td>134217728</td>
+  <td>the block size of a file</td>
+</tr>
+<tr>
+  <td>file.length.bytes</td>
+  <td>134217728</td>
+  <td>the file size of write test, in bytes</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer write once</td>
+</tr>
+<tr>
+  <td>write.type</td>
+  <td>ASYNC_THROUGH</td>
+  <td>the WriteType of the write operation, now only used for Alluxio</td>
+</tr>
+</table>
+
+<h2 id="simpleread">SimpleRead</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>files.per.thread</td>
+  <td>2</td>
+  <td>the number of files to read for each read thread</td>
+</tr>
+<tr>
+  <td>read.mode</td>
+  <td>SEQUENCE</td>
+  <td>the read mode of read test, should be RANDOM or SEQUENCE. This is used to choose which files to read</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer read once</td>
+</tr>
+<tr>
+  <td>read.type</td>
+  <td>CACHE_PROMOTE</td>
+  <td>the ReadType of the write operation, now only used for Alluxio</td>
+</tr>
+</table>
+
+<h2 id="skipread">SkipRead</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>files.per.thread</td>
+  <td>2</td>
+  <td>the number of files to read for each read thread</td>
+</tr>
+<tr>
+  <td>read.mode</td>
+  <td>SEQUENCE</td>
+  <td>the read mode of read test, should be RANDOM or SEQUENCE. This is used to choose which files to read</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer read once</td>
+</tr>
+<tr>
+  <td>read.type</td>
+  <td>CACHE_PROMOTE</td>
+  <td>the ReadType of the write operation, now only used for Alluxio</td>
+</tr>
+<tr>
+  <td>read.bytes</td>
+  <td>16777216</td>
+  <td>the read bytes for each skip-and-read operator</td>
+</tr>
+<tr>
+  <td>skip.bytes</td>
+  <td>16777216</td>
+  <td>the skip bytes for each skip-and-read operator</td>
+</tr>
+<tr>
+  <td>skip.mode</td>
+  <td>FORWARD</td>
+  <td>the skip mode, should be FORWARD or RANDOM</td>
+</tr>
+<tr>
+  <td>skip.times.per.file</td>
+  <td>2</td>
+  <td>the skip-and-read times for each read file</td>
+</tr>
+</table>
+
+<h2 id="mixture">Mixture</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>basic.files.per.thread</td>
+  <td>2</td>
+  <td>the number of basic files to write at the beginning for each thread</td>
+</tr>
+<tr>
+  <td>read.files.per.thread</td>
+  <td>4</td>
+  <td>the number of files to read for each thread</td>
+</tr>
+<tr>
+  <td>write.files.per.thread</td>
+  <td>1</td>
+  <td>the number of files to write for each thread</td>
+</tr>
+<tr>
+  <td>block.size.bytes</td>
+  <td>134217728</td>
+  <td>the block size of a file</td>
+</tr>
+<tr>
+  <td>file.length.bytes</td>
+  <td>134217728</td>
+  <td>the file size in bytes</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer read and write once</td>
+</tr>
+<tr>
+  <td>read.type</td>
+  <td>CACHE_PROMOTE</td>
+  <td>the ReadType of the read operation, now only used for Alluxio</td>
+</tr>
+<tr>
+  <td>write.type</td>
+  <td>ASYNC_THROUGH</td>
+  <td>the WriteType of the write operation, now only used for Alluxio</td>
+</tr>
+</table>
+
+<h2 id="iterate">Iterate</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>iterations</td>
+  <td>2</td>
+  <td>the number of the write-read iteration</td>
+</tr>
+<tr>
+  <td>shuffle.mode</td>
+  <td>false</td>
+  <td>shuffle mode means it may read remotely</td>
+</tr>
+<tr>
+  <td>read.files.per.thread</td>
+  <td>2</td>
+  <td>the number of files to read for each thread</td>
+</tr>
+<tr>
+  <td>write.files.per.thread</td>
+  <td>2</td>
+  <td>the number of files to write for each thread</td>
+</tr>
+<tr>
+  <td>block.size.bytes</td>
+  <td>134217728</td>
+  <td>the block size of a file</td>
+</tr>
+<tr>
+  <td>file.length.bytes</td>
+  <td>134217728</td>
+  <td>the file size in bytes</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer read and write once</td>
+</tr>
+<tr>
+  <td>read.type</td>
+  <td>CACHE_PROMOTE</td>
+  <td>the ReadType of the read operation, now only used for Alluxio</td>
+</tr>
+<tr>
+  <td>write.type</td>
+  <td>ASYNC_THROUGH</td>
+  <td>the WriteType of the write operation, now only used for Alluxio</td>
+</tr>
+</table>
+
+<h2 id="massive">Massive</h2>
+
+<table class="table">
+<tr><th>Property Name</th><th>Example</th><th>Meaning</th></tr>
+<tr>
+  <td>time.seconds</td>
+  <td>5</td>
+  <td>the time to do the global read/write</td>
+</tr>
+<tr>
+  <td>shuffle.mode</td>
+  <td>false</td>
+  <td>shuffle mode means it may read remotely</td>
+</tr>
+<tr>
+  <td>basic.files.per.thread</td>
+  <td>2</td>
+  <td>the number of global files to write at the beginning for each thread</td>
+</tr>
+<tr>
+  <td>block.size.bytes</td>
+  <td>134217728</td>
+  <td>the block size of a file</td>
+</tr>
+<tr>
+  <td>file.length.bytes</td>
+  <td>134217728</td>
+  <td>the file size in bytes</td>
+</tr>
+<tr>
+  <td>buffer.size.bytes</td>
+  <td>4194304</td>
+  <td>the size of the buffer read and write once</td>
+</tr>
+<tr>
+  <td>read.type</td>
+  <td>CACHE_PROMOTE</td>
+  <td>the ReadType of the read operation, now only used for Alluxio</td>
+</tr>
+<tr>
+  <td>write.type</td>
+  <td>ASYNC_THROUGH</td>
+  <td>the WriteType of the write operation, now only used for Alluxio</td>
+</tr>
+</table>
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <!--<div class="hero-unit">
+        <h1>Hello, world!</h1>
+        <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.</p>
+        <p><a class="btn btn-primary btn-large">Learn more &raquo;</a></p>
+            </div>-->
+
+    <!-- Example row of columns -->
+    <!--<div class="row">
+        <div class="span4">
+            <h2>Heading</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+               </div>
+                <div class="span4">
+                    <h2>Heading</h2>
+                    <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+                    <p><a class="btn" href="#">View details &raquo;</a></p>
+                </div>
+            </div>
+
+            <hr>-->
+
+    <footer>
+        <hr>
+        <p style="text-align: center; veritcal-align: middle; color: #999;">
+            DFS-Perf is a project developed at the Nanjing University
+            <a href="http://pasa-bigdata.nju.edu.cn/">
+                PASALab.
+            </a> All Rights Reserved.
+        </p>
+    </footer>
+
+</div>
+<!-- /container -->
+
+<script src="js/vendor/jquery-1.8.0.min.js"></script>
+<script src="js/vendor/bootstrap.min.js"></script>
+<script src="js/main.js"></script>
+
+<!-- A script to fix internal hash links because we have an overlapping top bar.
+     Based on https://github.com/twitter/bootstrap/issues/193#issuecomment-2281510 -->
+<script>
+    $(function () {
+        function maybeScrollToHash() {
+            if (window.location.hash && $(window.location.hash).length) {
+                var newTop = $(window.location.hash).offset().top - $('#topbar').height() - 5;
+                $(window).scrollTop(newTop);
+            }
+        }
+
+        $(window).bind('hashchange', function () {
+            maybeScrollToHash();
+        });
+        // Scroll now too in case we had opened the page on a hash, but wait 1 ms because some browsers
+        // will try to do *their* initial scroll after running the onReady handler.
+        setTimeout(function () {
+            maybeScrollToHash();
+        }, 1)
+    })
+</script>
+
+</body>
+</html>

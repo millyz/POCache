@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <property>
+<name>files.per.thread</name><value>2000</value>
+    <description>the number of files to read for each read thread</description>
+  </property>
+  <property>
+<name>read.mode</name><value>Zipf</value>
+    <!--<value>RANDOM</value>-->
+<name>read.mode</name><value>Zipf</value>
+  </property>
+  <property>
+    <name>buffer.size.bytes</name>
+    <value>4194304</value>
+    <description>the size of the buffer read once</description>
+  </property>
+  <property>
+    <name>read.type</name>
+    <value>CACHE_PROMOTE</value>
+    <description>the ReadType of the read operation, no it only used for Alluxio</description>
+  </property>
+</configuration>
+
