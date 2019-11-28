@@ -3407,8 +3407,8 @@ lodash.merge@^3.0.2, lodash.merge@^3.3.2:
     lodash.keysin "^3.0.0"
     lodash.toplainobject "^3.0.0"
 
-lodash.merge@^4.5.1:
-  version "4.6.0"
+lodash.merge@^4.6.2:
+  version "4.6.2"
   resolved "https://registry.yarnpkg.com/lodash.merge/-/lodash.merge-4.6.0.tgz#69884ba144ac33fe699737a6086deffadd0f89c5"
 
 lodash.mergewith@^4.6.0:
@@ -3462,9 +3462,15 @@ lodash@^3.10.0, lodash@^3.6.0, lodash@^3.9.3:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
+<<<<<<< HEAD
 lodash@^4.0.0, lodash@^4.14.0, lodash@^4.5.1, lodash@~4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz"
+=======
+lodash@^4.0.0, lodash@^4.14.0, lodash@^4.5.1, lodash@~4.17.4:
+  version "4.17.13"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.13.tgz"
+>>>>>>> df7d2adc8b95eb981fdb50cccdc027857dcc4ad4
 
 lodash@~2.3.0:
   version "2.3.0"
