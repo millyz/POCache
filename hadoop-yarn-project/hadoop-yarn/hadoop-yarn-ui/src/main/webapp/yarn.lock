@@ -541,9 +541,9 @@ bower-shrinkwrap-resolver-ext@0.1.0:
     semver "^5.3.0"
     string.prototype.endswith "^0.2.0"
 
-bower@1.7.7, bower@^1.3.12:
-  version "1.7.7"
-  resolved "https://registry.yarnpkg.com/bower/-/bower-1.7.7.tgz#2fd7ff3ebdcba5a8ffcd84c397c8fdfe9f825f92"
+bower@1.7.7, bower@^1.3.12, bower@^1.8.8:
+  version "1.8.8"
+  resolved "https://registry.yarnpkg.com/bower/-/bower-1.8.8.tgz"
 
 brace-expansion@^1.0.0:
   version "1.1.7"
@@ -889,7 +889,7 @@ broccoli@0.16.8:
     connect "^3.3.3"
     copy-dereference "^1.0.0"
     findup-sync "^0.2.1"
-    handlebars "^3.0.1"
+    handlebars "^3.0.7"
     mime "^1.2.11"
     promise-map-series "^0.2.1"
     quick-temp "^0.1.2"
@@ -2633,9 +2633,9 @@ growl@^1.8.1:
   version "1.9.2"
   resolved "https://registry.yarnpkg.com/growl/-/growl-1.9.2.tgz#0ea7743715db8d8de2c5ede1775e1b45ac85c02f"
 
-handlebars@^3.0.1:
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-3.0.3.tgz#0e09651a2f0fb3c949160583710d551f92e6d2ad"
+handlebars@^3.0.7:
+  version "3.0.7"
+  resolved "https://registry.yarnpkg.com/handlebars/-/handlebars-3.0.7.tgz"
   dependencies:
     optimist "^0.6.1"
     source-map "^0.1.40"
@@ -3462,9 +3462,9 @@ lodash@^3.10.0, lodash@^3.6.0, lodash@^3.9.3:
   version "3.10.1"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
 
-lodash@^4.0.0, lodash@^4.14.0, lodash@^4.5.1, lodash@~4.17.4:
-  version "4.17.4"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.4.tgz#78203a4d1c328ae1d86dca6460e369b57f4055ae"
+lodash@^4.0.0, lodash@^4.14.0, lodash@^4.5.1, lodash@~4.17.11:
+  version "4.17.11"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz"
 
 lodash@~2.3.0:
   version "2.3.0"
@@ -3803,7 +3803,7 @@ node-gyp@^3.3.1:
     request "2"
     rimraf "2"
     semver "~5.3.0"
-    tar "^2.0.0"
+    tar "^2.2.2"
     which "1"
 
 node-gyp@~3.0.3:
@@ -5176,9 +5176,9 @@ tar@^1.0.0:
     fstream "^1.0.2"
     inherits "2"
 
-tar@^2.0.0, tar@~2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/tar/-/tar-2.2.1.tgz#8e4d2a256c0e2185c6b18ad694aec968b83cb1d1"
+tar@^2.0.0, tar@~2.2.2:
+  version "2.2.2"
+  resolved "https://registry.yarnpkg.com/tar/-/tar-2.2.2.tgz"
   dependencies:
     block-stream "*"
     fstream "^1.0.2"
