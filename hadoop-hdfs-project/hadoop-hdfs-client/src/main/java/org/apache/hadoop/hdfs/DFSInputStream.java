@@ -226,7 +226,7 @@ public class DFSInputStream extends FSInputStream
     // POCache added
     if (dfsClient.isPcacheOn()) {
       HashSet<HostAndPort> clusterNodes = new HashSet<>();
-      clusterNodes.add(new HostAndPort(dfsClient.getConf().getRedisIp, 7000));
+      clusterNodes.add(new HostAndPort(dfsClient.getConf().getRedisIp(), 7000));
       jedisc = new JedisCluster(clusterNodes, new JedisPoolConfig());
     }
   }

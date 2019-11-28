@@ -669,7 +669,7 @@ public class DfsClientConf {
   /**
    * @return the redisIp
    */
-  public int getRedisIp() { return redisIp; }
+  public String getRedisIp() { return redisIp; }
 
   /**
    * @return the replicaAccessorBuilderClasses
