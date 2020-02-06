@@ -885,7 +885,7 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
       this.dir = new FSDirectory(this, conf);
       this.snapshotManager = new SnapshotManager(conf, dir);
       this.cacheManager = new CacheManager(this, conf, blockManager);
-      this.parityCacheManager = new ParityCacheManager(this, conf, blockManager); // POCache added
+      this.parityCacheManager = new ParityCacheManager(this, conf); // POCache added
       // Init ErasureCodingPolicyManager instance.
       ErasureCodingPolicyManager.getInstance().init(conf);
       this.topConf = new TopConf(conf);
@@ -2881,7 +2881,7 @@ public class FSNamesystem implements Namesystem, FSNamesystemMBean,
       // POCache added
       // Inform ParityCacheManager that file has been completed
       //if (parityCacheOn)
-      getParityCacheManager().reportCompleteFile(fileId);
+      getParityCacheManager().reportCompleteFile(fileId, src);
       // POCache added on Jan. 5, 2018
       // Mark this file can use pcache when writing a new file
       // The size of this file equals to a stripe, which is k blocks

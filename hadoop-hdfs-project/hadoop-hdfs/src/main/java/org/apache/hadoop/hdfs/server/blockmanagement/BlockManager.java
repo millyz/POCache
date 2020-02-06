@@ -1380,7 +1380,7 @@ public class BlockManager implements BlockStatsMXBean {
       final boolean isFileUnderConstruction, final long offset,
       final long length, final boolean needBlockToken,
       final boolean inSnapshot, FileEncryptionInfo feInfo,
-      ErasureCodingPolicy ecPolicy, long fileId)
+      ErasureCodingPolicy ecPolicy, long fileId, String src)
       throws IOException {
 
     assert namesystem.hasReadLock();
@@ -1420,8 +1420,7 @@ public class BlockManager implements BlockStatsMXBean {
 
       // POCache added on Jan. 5, 2018
       LocatedBlocks locations = locatedBlocks.build();
-      ParityCacheInfo pcInfo = namesystem.getParityCacheManager().getPcInfo(fileId, true,
-          fileSizeExcludeBlocksUnderConstruction, locatedBlocks.getLocatedBlocks());
+      ParityCacheInfo pcInfo = namesystem.getParityCacheManager().getPcInfo(fileId, src);
       locations.setPcInfo(pcInfo);
 
       // Set caching information for the located blocks

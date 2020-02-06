@@ -12,14 +12,12 @@ public class StragglerAwareCache extends LRUCache {
   public static final Logger LOG = LoggerFactory.getLogger(StragglerAwareCache.class);
   private HashSet<String> slowDataNodes;
   private HashMap<String, Double> nodesServiceRate;
-  private HashMap<Long, Long> ttls;
 
   private ParityCacheManager pcm;
 
   public StragglerAwareCache(int capacity, ParityCacheManager pcm) {
     super(capacity);
     this.pcm = pcm;
-    this.ttls = new HashMap<>();
     this.slowDataNodes = new HashSet<>();
     this.nodesServiceRate = new HashMap<>();
 
@@ -93,4 +91,5 @@ public class StragglerAwareCache extends LRUCache {
     }
     return false;
   }
+
 }

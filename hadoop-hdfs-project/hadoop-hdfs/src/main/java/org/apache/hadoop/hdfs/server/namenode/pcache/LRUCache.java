@@ -31,18 +31,19 @@ public class LRUCache implements ParityCacheAlgorithm {
     return 0;
   }
 
+  // LRU's cache admission policy:
+  // Cache a file into memory upon access
   public boolean shouldCacheParity(long fileID) {
     if (this.newFiles.contains(fileID)) return true;
     return false;
   }
 
+  // LRU's cache eviction policy:
+  // Evict the file that was accessed less recently than any other
   public HashSet<Long> updateCachedParity(long key, int value) {
     HashSet<Long> fileIdEvict = new HashSet<Long>();
     if(map.containsKey(key)) {
       Node old = map.get(key);
-      if (old.value != value) {
-        return update(key, value);
-      }
       remove(old);
       setHead(old);
     } else {
@@ -63,12 +64,6 @@ public class LRUCache implements ParityCacheAlgorithm {
       if (this.newFiles.contains(key))
         this.newFiles.remove(key);
     }
-    return fileIdEvict;
-  }
-
-  protected HashSet<Long> update(long key, int value) {
-    HashSet<Long> fileIdEvict = new HashSet<Long>();
-    // TODO - incease/decrease the parity for the cached file
     return fileIdEvict;
   }
 

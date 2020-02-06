@@ -238,7 +238,6 @@ public class DFSInputStream extends FSInputStream
     this.verifyChecksum = verifyChecksum;
     this.src = src;
 
-
     synchronized (infoLock) {
       this.cachingStrategy = dfsClient.getDefaultReadCachingStrategy();
     }
@@ -318,6 +317,7 @@ public class DFSInputStream extends FSInputStream
 
       HashSet<HostAndPort> clusterNodes = new HashSet<>();
       clusterNodes.add(new HostAndPort(dfsClient.getConf().getRedisIp(), 7000));
+      DFSClient.LOG.info("zmdebug: redisIP = {}", dfsClient.getConf().getRedisIp());
       jedisc = new JedisCluster(clusterNodes, new JedisPoolConfig());
 
       // Require to encode
@@ -1433,8 +1433,7 @@ public class DFSInputStream extends FSInputStream
       this.curStripeIdx = stripeIdx;
     }
 
-    String keyBase = String.valueOf(stripeIdx) + "_" + 
-      String.valueOf(substripeIdx) + "_";
+    String keyBase = String.valueOf(stripeIdx) + "_" + String.valueOf(substripeIdx) + "_";
 
     if (this.readSubstripeSet.get(keyBase) == null) {
       // Mark this substripe has been read
@@ -1493,16 +1492,14 @@ public class DFSInputStream extends FSInputStream
           return -1;
         }
       } catch (ExecutionException e) {
-        DFSClient.LOG.error("zmdebug readPcacheProactive(): Exception - pcacheReadFutures.get({}).get()", key);
-        return -1;
+        DFSClient.LOG.error("zmdebug readPcacheProactive(): Exception {} - pcacheReadFutures.get({}).get()", e, key);
       } catch (InterruptedException e) {
         throw new InterruptedIOException(
                 "zmdebug readPcacheProactive(): Interrupted while getting result of reading task");
       } catch (CancellationException e) {
-
+        DFSClient.LOG.error("zmdebug readPcacheProactive(): CancellationException {} - pcacheReadFutures.get({}).get()", e, key);
       }
     } else {
-
       String slowDataNode = futureKeyToDataNode.get(key);
       int count = 0;
       if (slowDataNodes.get(slowDataNode) != null)
@@ -1528,7 +1525,6 @@ public class DFSInputStream extends FSInputStream
             //DFSClient.LOG.info("qpdebug: remaining of key {} {}", _key, inputs[i].remaining());
           } catch (ExecutionException e) {
             DFSClient.LOG.error("zmdebug readPcacheProactive(): Exception - pcacheReadFutures.get({}).get()", _key);
-            return -1;
           } catch (InterruptedException e) {
             throw new InterruptedIOException(
                     "zmdebug readPcacheProactive(): Interrupted while getting result of reading task");

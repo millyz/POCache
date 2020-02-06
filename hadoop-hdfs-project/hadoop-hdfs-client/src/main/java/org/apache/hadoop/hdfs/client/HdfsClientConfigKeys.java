@@ -42,7 +42,7 @@ public interface HdfsClientConfigKeys {
   String DFS_PARALLEL_READ_KEY = "dfs.pcache.parallelreadonly.on";
   boolean DFS_PARALLEL_READ_DEFAULT = false;
   String DFS_PCACHE_REDIS_IP = "dfs.pcache.redis.ip";
-  String DFS_PCACHE_REDIS_IP_DEFAULT = "127.0.0.1";
+  String DFS_PCACHE_REDIS_IP_DEFAULT = "192.168.10.28";
 
 
   String  DFS_WEBHDFS_USER_PATTERN_KEY =
@@ -429,12 +429,6 @@ public interface HdfsClientConfigKeys {
     int NUM_DAT_DEFAULT = 4;
     String NUM_PAR_KEY = PREFIX + "par.num";
     int NUM_PAR_DEFAULT = 1;
-    String RANDOM_SEED_KEY = PREFIX + "random.seed";
-    long RANDOM_SEED_DEFAULT = 1000;
-    String PROB_STRAG_KEY = PREFIX + "strag.prob";
-    double PROB_STRAG_DEFAULT = 0.005;
-    String TIME_STRAG_KEY = PREFIX + "starg.time";
-    int TIME_STRAG_DEFAULT = 200;
   }
 
   /** dfs.client.read.striped configuration properties */

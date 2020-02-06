@@ -271,6 +271,7 @@ public class DFSOutputStream extends FSOutputSummer
     this.useSelecRep = (dfsClient.getConf().getPcacheReadPolicy() == 20);
     // Cache parity block
     if (dfsClient.isPcacheOn() && !dfsClient.isParallelReadOnly()) {
+      DFSClient.LOG.info("zmdebug - pocache is turned on!");
       if (stat.getErasureCodingPolicy() == null) {
         this.isStripedLayout = false;
       } else {
@@ -301,7 +302,8 @@ public class DFSOutputStream extends FSOutputSummer
       this.pcacheWriteFutures = new ArrayList<>();
       this.encoder = new NativeRSRawEncoder(new ErasureCoderOptions(numDataBlocksPerStripe, numParityBlocksPerStripe));
       HashSet<HostAndPort> clusterNodes = new HashSet<>();
-      clusterNodes.add(new HostAndPort("192.168.10.47", 7000));
+      clusterNodes.add(new HostAndPort(dfsClient.getConf().getRedisIp(), 7000));
+      DFSClient.LOG.info("zmdebug: redisIP = {}", dfsClient.getConf().getRedisIp());
       this.jedisc = new JedisCluster(clusterNodes, new JedisPoolConfig());
     }
 
@@ -729,6 +731,7 @@ public class DFSOutputStream extends FSOutputSummer
       jc.set(datKey.getBytes(), subBlk);
     } catch (Exception e) {
       e.printStackTrace();
+      DFSClient.LOG.error("zmdebug - writeSubblock() to redis: {}", e);
       return false;
     }
     return true;

@@ -1,5 +1,5 @@
-// POCache added on Feb. 4, 2018
-// This is ARC algorithm for parity cache
+// POCache added on Jan. 8, 2020
+// This is ARC algorithm used by ConfigurableStraggleAwareCache algorithm
 // Adapted from https://github.com/ben-manes/caffeine/blob/master/simulator/src/main/java/com/github/benmanes/caffeine/cache/simulator/policy/adaptive/ArcPolicy.java
 package org.apache.hadoop.hdfs.server.namenode.pcache;
 
@@ -8,61 +8,7 @@ import java.util.HashMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-enum QueueType { T1, B1, T2, B2 }
-
-class ArcNode {
-  final long key; // key is the fileID
-  int value;
-  ArcNode prev;
-  ArcNode next;
-  QueueType type;
-
-  ArcNode() {
-    this.key = Long.MIN_VALUE;
-    this.value = 1;
-    this.prev = this;
-    this.next = this;
-  }
-
-  ArcNode(long key) {
-    this.key = key;
-    this.value = 1;
-    this.prev = this;
-    this.next = this;
-  }
-
-  ArcNode(long key, int value) {
-    this.key = key;
-    this.value = value;
-  }
-
-  /** Appends the node to the tail of the list. */
-  public void appendToTail(ArcNode head) {
-    ArcNode tail = head.prev;
-    head.prev = this;
-    // POCache added correct on Apr. 20, 2018
-    this.next = head;
-
-    this.prev = tail;
-    tail.next = this;
-  }
-
-  /** Removes the node from the list */
-  public void remove() {
-    prev.next = this.next;
-    next.prev = this.prev;
-    prev = next = null;
-    type = null;
-  }
-
-  @Override
-  public String toString() {
-    return new StringBuilder().append("ArcNode(").append(key).append(",").
-      append(value).append(",").append(type).append(")").toString();
-  }
-}
-
-public class ARCCache implements ParityCacheAlgorithm {
+public class ARC {
   // In Cache:
   // - T1: Pages that have been accessed at least once
   // - T2: Pages that have been accessed at least twice
@@ -72,7 +18,7 @@ public class ARCCache implements ParityCacheAlgorithm {
   // Adapt:
   // - Hit in B1 should increase size of T1, drop entry from T2 to B2
   // - Hit in B2 should increase size of T2, drop entry from T1 to B1
-  public static final Logger LOG = LoggerFactory.getLogger(ARCCache.class);
+  public static final Logger LOG = LoggerFactory.getLogger(ARC.class);
   private final int capacity;
   private final HashMap<Long, ArcNode> map;
   private final ArcNode headT1;
@@ -85,7 +31,7 @@ public class ARCCache implements ParityCacheAlgorithm {
   private int sizeB2;
   private int p;
 
-  public ARCCache(int capacity) {
+  public ARC(int capacity) {
     this.capacity = capacity;
     this.map = new HashMap<>();
     this.headT1 = new ArcNode();
@@ -94,50 +40,30 @@ public class ARCCache implements ParityCacheAlgorithm {
     this.headB2 = new ArcNode();
   }
 
-  // Get the parity number that are in cache for key
-  public int getCachedParity(long key) {
+  // File with key is read
+  public void getFromCSAC(long key) {
     if (this.map.containsKey(key)) {
       ArcNode node = this.map.get(key);
-      int val = node.value;
       // onHit
       if (node.type == QueueType.T1 || node.type == QueueType.T2) {
         this.onHit(node);
-        return val;
       }
     }
-    return 0;
   }
 
-  // Cache all the new files that are not in cache
-  // ARC's cache admission policy:
-  // Cache a file into memory upon access
-  public boolean shouldCacheParity(long key) {
-    LOG.info("qpdebug: current capacity {}", this.capacity);
-    if (this.map.containsKey(key)) {
-      ArcNode node = this.map.get(key);
-      if (node.type == QueueType.T1 || node.type == QueueType.T2) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  // Load file's parity into cache
-  // ARC's cache eviction policy:
-  // Evict the file based on access recency and frequency
-  public HashSet<Long> updateCachedParity(long key, int new_value) {
-    LOG.info("qpdebug: current capacity {}", this.capacity);
+  // Cache file with key From CSAC
+  public long updateFromCSAC(long key) {
     ArcNode node = map.get(key);
     if (node == null) {
-      return onMiss(key, new_value);
+      return onMiss(key);
     } else if (node.type == QueueType.B1) {
-      return onHitB1(node, new_value);
+      return onHitB1(node);
     } else if (node.type == QueueType.B2) {
-      return onHitB2(node, new_value);
+      return onHitB2(node);
     } else {
-      onHit(node);
+      LOG.error("zmdebug - evictFromSAC(): {} has been cached.", key);
     }
-    return null;
+    return -1;
   }
 
   // T1 --> T2
@@ -153,9 +79,9 @@ public class ARCCache implements ParityCacheAlgorithm {
   }
 
   // B1 --> T2
-  private HashSet<Long> onHitB1(ArcNode node, int new_value) {
+  private long onHitB1(ArcNode node) {
     p = Math.min(capacity, p + Math.max(sizeB2 / sizeB1, 1));
-    HashSet<Long> fileIdEvict = evict(node);
+    long fileIdEvict = evict(node);
 
     sizeT2++;
     sizeB1--;
@@ -167,9 +93,9 @@ public class ARCCache implements ParityCacheAlgorithm {
   }
 
   // B2 --> T2
-  private HashSet<Long> onHitB2(ArcNode node, int new_value) {
+  private long onHitB2(ArcNode node) {
     p = Math.max(0, p - Math.max(sizeB1 / sizeB2, 1));
-    HashSet<Long> fileIdEvict = evict(node);
+    long fileIdEvict = evict(node);
 
     sizeT2++;
     sizeB2--;
@@ -180,11 +106,10 @@ public class ARCCache implements ParityCacheAlgorithm {
   }
 
   // --> T1
-  private HashSet<Long> onMiss(long key, int new_value) {
+  private long onMiss(long key) {
     ArcNode node = new ArcNode(key);
     node.type = QueueType.T1;
-
-    HashSet<Long> fileIdEvict = new HashSet<>();
+    long fileIdEvict = -1;
 
     int sizeL1 = (sizeT1 + sizeB1);
     int sizeL2 = (sizeT2 + sizeB2);
@@ -201,7 +126,7 @@ public class ARCCache implements ParityCacheAlgorithm {
         map.remove(victim.key);
         victim.remove();
         sizeT1--;
-        fileIdEvict.add(victim.key);
+        fileIdEvict = victim.key;
       }
     } else if ((sizeL1 < capacity) && (sizeL1 + sizeL2) >= capacity) {
       if ((sizeL1 + sizeL2) >= (2 * capacity)) {
@@ -210,7 +135,6 @@ public class ARCCache implements ParityCacheAlgorithm {
         victim.remove();
         sizeB2--;
       }
-      // TODO: ??
       fileIdEvict = evict(node);
     }
 
@@ -221,8 +145,8 @@ public class ARCCache implements ParityCacheAlgorithm {
     return fileIdEvict;
   }
 
-  private HashSet<Long> evict(ArcNode candidate) {
-    HashSet<Long> fileIdEvict = new HashSet<>();
+  private long evict(ArcNode candidate) {
+    long fileIdEvict = -1;
     if ((sizeT1 >= 1) && (((candidate.type == QueueType.B2) && (sizeT1 == p)) || (sizeT1 > p))) {
       ArcNode victim = headT1.next;
       victim.remove();
@@ -230,7 +154,7 @@ public class ARCCache implements ParityCacheAlgorithm {
       victim.appendToTail(headB1);
       sizeT1--;
       sizeB1++;
-      fileIdEvict.add(victim.key);
+      fileIdEvict = victim.key;
     } else {
       ArcNode victim = headT2.next;
       victim.remove();
@@ -238,7 +162,7 @@ public class ARCCache implements ParityCacheAlgorithm {
       victim.appendToTail(headB2);
       sizeT2--;
       sizeB2++;
-      fileIdEvict.add(victim.key);
+      fileIdEvict = victim.key;
     }
     return fileIdEvict;
   }

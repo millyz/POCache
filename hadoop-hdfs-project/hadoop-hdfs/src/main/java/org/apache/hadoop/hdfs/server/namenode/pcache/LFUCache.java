@@ -1,13 +1,11 @@
 // POCache added on Nov. 24, 2018
-// This is LFU algorithm for parity cache (potato and selective replication)
+// This is LFU algorithm for parity cache (pocache and selective replication)
 package org.apache.hadoop.hdfs.server.namenode.pcache;
 
 import java.util.HashSet;
 import java.util.HashMap;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,15 +27,18 @@ public class LFUCache implements ParityCacheAlgorithm {
   }
 
   public synchronized void addFrequency(long key) {
-    if ( !this.frequencies.containsKey(key) ) {
+    // Update <key, frequency> in frequencies
+    if (!this.frequencies.containsKey(key)) {
       this.frequencies.put(key, 0);
     }
     int frequency = this.frequencies.get(key) + 1;
     this.frequencies.put(key, frequency);
+
+    // mostFrequenKeys is sorted by the access recency
     if (this.mostFrequentKeys.contains(key)) {
       this.mostFrequentKeys.remove(key);
       this.mostFrequentKeys.add(key);
-      return ;
+      return;
     }
     if (this.mostFrequentKeys.size() < capacity) {
       this.mostFrequentKeys.add(key);
@@ -63,10 +64,14 @@ public class LFUCache implements ParityCacheAlgorithm {
       return 0;
   }
 
+  // LFU's cache admission policy:
+  // Cache the file that are accessed frequently
   public boolean shouldCacheParity(long key) {
     return this.mostFrequentKeys.contains(key);
   }
 
+  // LFU's cach eviction policy:
+  // Evict the file with minimum access frequency
   public HashSet<Long> updateCachedParity(long key, int value) {
     //LOG.info("qpdebug: to evict keys {}", this.toEvictKeys);
     HashSet<Long> fileIdEvict = this.toEvictKeys;

@@ -414,8 +414,7 @@ public class DFSClient implements java.io.Closeable, RemotePeerFactory,
     this.numThreadsForWriteSubBlk = dfsClientConf.getNumThreadsWriteSubblk();
 
     if (pcacheOn && dfsClientConf.getPcacheReadThreadpoolSize() > 0) {
-      this.initThreadsNumForPcacheReads(dfsClientConf.
-          getPcacheReadThreadpoolSize());
+      this.initThreadsNumForPcacheReads(dfsClientConf.getPcacheReadThreadpoolSize());
     }
   }
 

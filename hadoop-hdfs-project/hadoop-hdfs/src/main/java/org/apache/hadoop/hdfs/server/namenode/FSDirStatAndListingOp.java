@@ -181,7 +181,7 @@ class FSDirStatAndListingOp {
       final LocatedBlocks blocks = bm.createLocatedBlocks(
           inode.getBlocks(iip.getPathSnapshotId()), fileSize, isUc, offset,
             length, needBlockToken, iip.isSnapshot(), feInfo, ecPolicy,
-            iip.getLastINode().getId());
+            iip.getLastINode().getId(), src);
 
       final long now = now();
       boolean updateAccessTime = fsd.isAccessTimeSupported()
